@@ -24,6 +24,7 @@ export function toMemberDto(row: MemberRow, manageable: boolean) {
     fullNameEn: row.full_name_en,
     fullNameAr: row.full_name_ar,
     userId: row.user_id,
+    phone: row.phone,
     role: row.role,
     status: row.status,
     mustChangePassword: row.must_change_password,
@@ -54,6 +55,8 @@ export async function performAction(actor: MemberRow, body: Record<string, unkno
       return removeMember(actor, body);
     case "passwordChanged":
       return finishPasswordChange(actor);
+    case "profile":
+      return updateProfile(actor, body);
     default:
       throw new HttpError(400, "unknown_action");
   }
@@ -205,6 +208,20 @@ async function removeMember(actor: MemberRow, body: Record<string, unknown>) {
   const { error } = await db.from("members").delete().eq("id", id);
   if (error) throw error;
   return { ok: true };
+}
+
+async function updateProfile(actor: MemberRow, body: Record<string, unknown>) {
+  const fields = (typeof body.fields === "object" && body.fields !== null ? body.fields : {}) as Record<string, unknown>;
+  const fullNameEn = requireString(fields.fullNameEn, "name");
+  const fullNameAr = optionalString(fields.fullNameAr);
+  const phone = optionalString(fields.phone);
+  if (phone && !/^[+0-9 ()-]{7,24}$/.test(phone)) throw new HttpError(422, "invalid_phone");
+  const { error } = await db
+    .from("members")
+    .update({ full_name_en: fullNameEn, full_name_ar: fullNameAr, phone, updated_at: new Date().toISOString() })
+    .eq("id", actor.id);
+  if (error) throw error;
+  return { member: toMemberDto(await loadMember(actor.id), false) };
 }
 
 async function finishPasswordChange(actor: MemberRow) {

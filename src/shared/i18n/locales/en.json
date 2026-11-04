@@ -78,6 +78,46 @@
     "settings": { "title": "Settings", "description": "Company profile, approval rules and access." },
     "profile": { "title": "My profile", "description": "Your details, password and sign-in security." }
   },
+  "settings": {
+    "title": "Personal settings",
+    "description": "Choose how SalesPilot looks and feels for your account.",
+    "languageTitle": "Language",
+    "languageDescription": "This choice applies to your account on every device.",
+    "english": "English",
+    "arabic": "العربية",
+    "appearanceTitle": "Appearance",
+    "appearanceDescription": "Switch between a bright workspace and a focused dark workspace.",
+    "light": "Light",
+    "dark": "Dark",
+    "themeTitle": "Visual theme",
+    "themeDescription": "Choose a completely different color identity for your workspace.",
+    "themes": {
+      "ocean": "Ocean",
+      "forest": "Forest",
+      "sunset": "Sunset",
+      "slate": "Slate",
+      "rose": "Rose",
+      "sand": "Sand",
+      "midnight": "Midnight"
+    }
+  },
+  "profile": {
+    "title": "My profile",
+    "description": "Manage the personal details connected to your account.",
+    "detailsTitle": "Personal details",
+    "nameEn": "Full name (English)",
+    "nameAr": "Full name (Arabic)",
+    "phone": "Phone number",
+    "email": "Sign-in email",
+    "save": "Save changes",
+    "saving": "Saving...",
+    "saved": "Your profile was updated.",
+    "error": "Could not save your profile. Please try again.",
+    "passwordTitle": "Password",
+    "passwordDescription": "Send a secure password-change link to your sign-in email.",
+    "sendReset": "Email me a password link",
+    "resetSent": "A password-change link was sent to your email."
+  },
   "placeholder": {
     "badge": "Coming next",
     "body": "This section is part of the next delivery milestone and is not built yet."

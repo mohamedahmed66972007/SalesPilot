@@ -18,6 +18,7 @@ export interface RosterMember {
   fullNameEn: string;
   fullNameAr: string | null;
   userId: string;
+  phone: string | null;
   role: RosterRole;
   status: RosterStatus;
   mustChangePassword: boolean;
@@ -40,6 +41,12 @@ export interface RosterListResponse {
   members: RosterMember[];
   lookups: RosterLookups;
   assignableRoles: RosterRole[];
+}
+
+export interface ProfileFields {
+  fullNameEn: string;
+  fullNameAr: string | null;
+  phone: string | null;
 }
 
 export interface RosterMemberFields {
@@ -118,6 +125,11 @@ async function callRoster<T>(body: Record<string, unknown>): Promise<T> {
 
 export async function fetchCurrentMember(): Promise<RosterMember> {
   const { member } = await callRoster<{ member: RosterMember }>({ action: 'me' });
+  return member;
+}
+
+export async function updateProfile(fields: ProfileFields): Promise<RosterMember> {
+  const { member } = await callRoster<{ member: RosterMember }>({ action: 'profile', fields });
   return member;
 }
 

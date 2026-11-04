@@ -2,13 +2,11 @@ import { Bell, ChevronDown, Check } from 'lucide-react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { changeLanguage } from '@/shared/i18n';
 import { usePreferences, type DigitStyle } from '@/shared/stores/preferences';
 import { useCurrentUser } from '@/data/queries';
 import { DemoRoleSwitcherItems } from '@/app/dev/DemoRoleSwitcherItems';
 import { SHOW_DEMO_ROLE_SWITCHER } from '@/shared/constants/env';
 import { useAuth } from '@/features/auth/useAuth';
-import { cn } from '@/shared/utils/cn';
 
 function initialsOf(name: string): string {
   return name
@@ -110,28 +108,8 @@ function DigitOption({ value, label }: { value: DigitStyle; label: string }) {
 
 export function TopBarActions() {
   const { t } = useTranslation();
-  const language = usePreferences((state) => state.language);
-
   return (
     <div className="flex items-center gap-1 sm:gap-2">
-      <div role="group" aria-label={t('topbar.language')} className="flex rounded-full bg-neutral-100 p-1">
-        {(['en', 'ar'] as const).map((code) => (
-          <button
-            key={code}
-            type="button"
-            aria-pressed={language === code}
-            onClick={() => changeLanguage(code)}
-            className={cn(
-              'min-h-9 rounded-full px-3 text-xs font-semibold transition-colors',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500',
-              language === code ? 'bg-white text-primary-900 shadow-sm' : 'text-neutral-600 hover:text-primary-900'
-            )}
-          >
-            {code === 'en' ? t('topbar.languageEnglish') : t('topbar.languageArabic')}
-          </button>
-        ))}
-      </div>
-
       <NavLink
         to="/notifications"
         aria-label={t('topbar.notifications')}
