@@ -1,4 +1,4 @@
-import { provisionFirebaseAccount, firebaseErrorCode } from '@/shared/auth/firebase';
+import { provisionFirebaseAccount, firebaseErrorCode, type ProvisionOutcome } from '@/shared/auth/firebase';
 import type { RosterFileRow } from '@/features/roster/rosterSheet';
 
 export interface ProvisionReport {
@@ -6,6 +6,21 @@ export interface ProvisionReport {
   existing: number;
   failedLines: number[];
   firstErrorCode: string | null;
+}
+
+const PROVISION_DELAY_MS = 600;
+
+async function provisionWithRetry(email: string, password: string): Promise<ProvisionOutcome> {
+  try {
+    return await provisionFirebaseAccount(email, password);
+  } catch (error) {
+    const code = firebaseErrorCode(error);
+    if (code === 'auth/too-many-requests') {
+      await new Promise((resolve) => setTimeout(resolve, 2500));
+      return provisionFirebaseAccount(email, password);
+    }
+    throw error;
+  }
 }
 
 export async function provisionRosterAccounts(
@@ -19,7 +34,7 @@ export async function provisionRosterAccounts(
       if (report.firstErrorCode === null) report.firstErrorCode = 'missing_password';
     } else {
       try {
-        const outcome = await provisionFirebaseAccount(row.email, password);
+        const outcome = await provisionWithRetry(row.email, password);
         if (outcome === 'created') report.created += 1;
         else report.existing += 1;
       } catch (error) {
@@ -29,6 +44,9 @@ export async function provisionRosterAccounts(
       }
     }
     onProgress(index + 1);
+    if (index < rows.length - 1) {
+      await new Promise((resolve) => setTimeout(resolve, PROVISION_DELAY_MS));
+    }
   }
   return report;
 }
