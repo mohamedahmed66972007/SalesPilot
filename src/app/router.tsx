@@ -15,7 +15,7 @@ const sectionRoutes: RouteObject[] = NAV_ITEMS.map((item) => {
   const page = item.key === 'dashboard'
     ? <DashboardPage />
     : item.key === 'employees'
-      ? <RosterPageWrapper />
+      ? <RosterPage />
       : item.key === 'companies'
       ? <OrganizationPage section="companies" />
       : item.key === 'branches'
@@ -31,15 +31,7 @@ const sectionRoutes: RouteObject[] = NAV_ITEMS.map((item) => {
   return item.path === '/' ? { index: true, element } : { path: item.path.slice(1), element };
 });
 
-function RosterPageWrapper() {
-  return <AuthGate>{(member) => <RosterPage member={member} />}</AuthGate>;
-}
-
 export const router = createBrowserRouter([
-  {
-    path: '/roster',
-    element: <RosterPageWrapper />,
-  },
   {
     path: '/',
     element: <AuthGate>{() => <AppLayout />}</AuthGate>,

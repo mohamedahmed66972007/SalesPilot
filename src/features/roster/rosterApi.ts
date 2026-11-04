@@ -71,6 +71,7 @@ export interface RosterImportRow {
   userId: string;
   email: string;
   status: RosterStatus;
+  password?: string;
 }
 
 export interface RosterValidationIssue {
