@@ -26,7 +26,7 @@ export function RosterPage({ member }: { member: RosterMember }) {
   const [editing, setEditing] = useState<RosterMember | null>(null);
   const [removing, setRemoving] = useState<RosterMember | null>(null);
   const [importOpen, setImportOpen] = useState(false);
-  const isOwner = member.role === 'OWNER';
+  const canImport = member.role !== 'EMPLOYEE';
 
   const roster = rosterQuery.data;
   const visibleMembers = useMemo(() => {
@@ -75,7 +75,7 @@ export function RosterPage({ member }: { member: RosterMember }) {
               <span className="max-w-48 truncate text-sm font-medium text-primary-900" dir="auto">
                 {member.fullNameEn}
               </span>
-              <Badge tone={isOwner ? 'info' : 'neutral'}>{t(`roles.${member.role}`)}</Badge>
+              <Badge tone={canImport ? 'info' : 'neutral'}>{t(`roles.${member.role}`)}</Badge>
             </div>
             <Button variant="ghost" size="sm" onClick={() => void signOut()} aria-label={t('auth.signOut')}>
               <LogOut className="h-4 w-4" aria-hidden="true" />
@@ -90,7 +90,7 @@ export function RosterPage({ member }: { member: RosterMember }) {
           title={t('roster.title')}
           description={t('roster.description')}
           actions={
-            isOwner && (
+            canImport && (
               <Button onClick={() => setImportOpen(true)}>
                 <Upload className="h-4 w-4" aria-hidden="true" />
                 {t('roster.import.open')}
@@ -162,7 +162,7 @@ export function RosterPage({ member }: { member: RosterMember }) {
           if (!open) closeRemove();
         }}
       />
-      {isOwner && <ImportRosterDialog open={importOpen} onOpenChange={setImportOpen} />}
+      {canImport && <ImportRosterDialog open={importOpen} onOpenChange={setImportOpen} />}
     </div>
   );
 }

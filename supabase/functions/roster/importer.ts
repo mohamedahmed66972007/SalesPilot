@@ -162,7 +162,7 @@ export async function importMembers(actor: MemberRow, body: Record<string, unkno
       { role: actor.role, companyId: actor.company_id, branchId: actor.branch_id, teamId: actor.team_id },
       targetPlacement
     )) {
-      throw new HttpError(403, "out_of_scope");
+      continue;
     }
     const payload = {
       full_name_en: r.fullNameEn,
