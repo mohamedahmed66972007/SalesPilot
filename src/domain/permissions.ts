@@ -147,8 +147,8 @@ function matchesScope(user: SessionUser, scope: PermissionScope, resource: Permi
 
 export function can(user: SessionUser | null | undefined, action: Action, resource?: PermissionResource): boolean {
   if (!user) return false;
+  if (user.role === 'SUPER_ADMIN') return true;
   const scope = PERMISSION_MATRIX[action][user.role];
   if (!scope) return false;
-  if (user.role === 'SUPER_ADMIN') return scope === 'platform';
   return matchesScope(user, scope, resource);
 }

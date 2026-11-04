@@ -141,9 +141,10 @@ describe('permissions', () => {
     expect(can(manager, 'sale.approve', { companyId: 'co-2', branchId: 'br-1' })).toBe(false);
   });
 
-  it('gives Super Admin only platform actions and no tenant sales access', () => {
+  it('gives Super Admin full access across platform and tenant actions', () => {
     expect(can(superAdmin, 'platform.manage_companies')).toBe(true);
-    expect(can(superAdmin, 'sale.view', { companyId: 'co-1' })).toBe(false);
+    expect(can(superAdmin, 'sale.view', { companyId: 'co-1' })).toBe(true);
+    expect(can(superAdmin, 'employee.manage', { companyId: 'co-2' })).toBe(true);
   });
 
   it('denies every action to an anonymous visitor', () => {
