@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -31,6 +31,7 @@ export function EditMemberDialog({
   pending,
   error,
   onSave,
+  onCreateCompany,
   onOpenChange,
 }: {
   member: RosterMember | null;
@@ -38,9 +39,13 @@ export function EditMemberDialog({
   pending: boolean;
   error: boolean;
   onSave: (fields: RosterMemberFields) => void;
+  onCreateCompany: (name: string) => Promise<{ id: string; name: string }>;
   onOpenChange: (open: boolean) => void;
 }) {
   const { t } = useTranslation();
+  const [newCompanyName, setNewCompanyName] = useState('');
+  const [creatingCompany, setCreatingCompany] = useState(false);
+  const [createCompanyError, setCreateCompanyError] = useState(false);
   const {
     register,
     handleSubmit,
@@ -126,6 +131,25 @@ export function EditMemberDialog({
                 </option>
               ))}
             </select>
+            <div className="mt-2 flex gap-2">
+              <input value={newCompanyName} onChange={(event) => setNewCompanyName(event.target.value)} placeholder={t('roster.edit.newCompany')} className={`${inputClass} min-w-0 flex-1`} />
+              <Button type="button" variant="secondary" disabled={creatingCompany || !newCompanyName.trim()} onClick={async () => {
+                setCreatingCompany(true);
+                setCreateCompanyError(false);
+                try {
+                  const company = await onCreateCompany(newCompanyName.trim());
+                  setValue('companyId', company.id);
+                  setValue('branchId', '');
+                  setValue('teamId', '');
+                  setNewCompanyName('');
+                } catch {
+                  setCreateCompanyError(true);
+                } finally {
+                  setCreatingCompany(false);
+                }
+              }}>{creatingCompany ? t('roster.edit.creatingCompany') : t('roster.edit.addCompany')}</Button>
+            </div>
+            {createCompanyError && <p className="mt-1 text-xs text-error-700">{t('roster.edit.companyCreateFailed')}</p>}
           </Field>
           <Field id="edit-branch" label={t('roster.edit.branch')}>
             <select

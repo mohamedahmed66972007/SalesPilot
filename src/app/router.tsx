@@ -9,13 +9,20 @@ import { AuthGate } from '@/features/auth/AuthGate';
 import { RosterPage } from '@/features/roster/RosterPage';
 import { SettingsPage } from '@/features/settings/SettingsPage';
 import { ProfilePage } from '@/features/profile/ProfilePage';
+import { OrganizationPage } from '@/features/organization/OrganizationPage';
 
 const sectionRoutes: RouteObject[] = NAV_ITEMS.map((item) => {
   const page = item.key === 'dashboard'
     ? <DashboardPage />
     : item.key === 'employees'
       ? <RosterPageWrapper />
-      : item.key === 'settings'
+      : item.key === 'companies'
+      ? <OrganizationPage section="companies" />
+      : item.key === 'branches'
+        ? <OrganizationPage section="branches" />
+        : item.key === 'teams'
+          ? <OrganizationPage section="teams" />
+    : item.key === 'settings'
         ? <SettingsPage />
         : item.key === 'profile'
           ? <ProfilePage />

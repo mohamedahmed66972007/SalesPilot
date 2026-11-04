@@ -10,7 +10,7 @@ import { PageHeader } from '@/shared/ui/PageHeader';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { inputClass } from '@/shared/ui/Field';
 import type { RosterMember, RosterMemberFields } from '@/features/roster/rosterApi';
-import { useRemoveRosterMember, useRosterList, useUpdateRosterMember } from '@/features/roster/useRoster';
+import { useCreateRosterCompany, useRemoveRosterMember, useRosterList, useUpdateRosterMember } from '@/features/roster/useRoster';
 import { RosterTable } from '@/features/roster/RosterTable';
 import { EditMemberDialog } from '@/features/roster/EditMemberDialog';
 import { RemoveMemberDialog } from '@/features/roster/RemoveMemberDialog';
@@ -21,6 +21,7 @@ export function RosterPage({ member }: { member: RosterMember }) {
   const { signOut } = useAuth();
   const rosterQuery = useRosterList(member.id);
   const updateMutation = useUpdateRosterMember();
+  const createCompanyMutation = useCreateRosterCompany();
   const removeMutation = useRemoveRosterMember();
   const [search, setSearch] = useState('');
   const [editing, setEditing] = useState<RosterMember | null>(null);
@@ -148,6 +149,7 @@ export function RosterPage({ member }: { member: RosterMember }) {
           pending={updateMutation.isPending}
           error={updateMutation.isError}
           onSave={saveEdit}
+          onCreateCompany={(name) => createCompanyMutation.mutateAsync(name)}
           onOpenChange={(open) => {
             if (!open) closeEdit();
           }}

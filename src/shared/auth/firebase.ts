@@ -2,7 +2,6 @@ import { initializeApp, type FirebaseError } from 'firebase/app';
 import {
   createUserWithEmailAndPassword,
   getAuth,
-  sendEmailVerification,
   signOut,
   type Auth,
 } from 'firebase/auth';
@@ -50,8 +49,7 @@ export type ProvisionOutcome = 'created' | 'existing';
 export async function provisionFirebaseAccount(email: string, temporaryPassword: string): Promise<ProvisionOutcome> {
   const auth = getProvisioningAuth();
   try {
-    const credential = await createUserWithEmailAndPassword(auth, email, temporaryPassword);
-    await sendEmailVerification(credential.user);
+    await createUserWithEmailAndPassword(auth, email, temporaryPassword);
     return 'created';
   } catch (error) {
     if (firebaseErrorCode(error) === 'auth/email-already-in-use') return 'existing';

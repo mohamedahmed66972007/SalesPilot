@@ -1,9 +1,10 @@
-import { useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { Ban, Loader2, Mail, Target, UserX, WifiOff, type LucideIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/shared/ui/Button';
 import { Card } from '@/shared/ui/Card';
 import { useAuth } from '@/features/auth/useAuth';
+import { usePreferences } from '@/shared/stores/preferences';
 import { LoginForm } from '@/features/auth/LoginForm';
 import { ChangePasswordForm } from '@/features/auth/ChangePasswordForm';
 import { ForgotPasswordForm } from '@/features/auth/ForgotPasswordForm';
@@ -12,6 +13,11 @@ import type { RosterMember } from '@/features/roster/rosterApi';
 export function AuthGate({ children }: { children: (member: RosterMember) => ReactNode }) {
   const { t } = useTranslation();
   const { state, retry } = useAuth();
+  const setUserId = usePreferences((preferences) => preferences.setUserId);
+
+  useEffect(() => {
+    if (state.status === 'ready') setUserId(state.member.id);
+  }, [setUserId, state]);
   const [recovering, setRecovering] = useState(false);
 
   switch (state.status) {

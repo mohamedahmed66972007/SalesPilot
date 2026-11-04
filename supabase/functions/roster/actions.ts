@@ -25,6 +25,7 @@ export function toMemberDto(row: MemberRow, manageable: boolean) {
     fullNameAr: row.full_name_ar,
     userId: row.user_id,
     phone: row.phone,
+    rosterOrder: row.roster_order,
     role: row.role,
     status: row.status,
     mustChangePassword: row.must_change_password,
@@ -49,6 +50,8 @@ export async function performAction(actor: MemberRow, body: Record<string, unkno
       return listMembers(actor);
     case "import":
       return importMembers(actor, body);
+    case "createCompany":
+      return createCompany(actor, body);
     case "update":
       return updateMember(actor, body);
     case "remove":
@@ -86,7 +89,11 @@ async function loadMember(id: string): Promise<MemberRow> {
 }
 
 function scopedMembersQuery(actor: MemberRow) {
-  const query = db.from("members").select(MEMBER_SELECT).order("full_name_en");
+  const query = db
+    .from("members")
+    .select(MEMBER_SELECT)
+    .order("roster_order", { ascending: true, nullsFirst: false })
+    .order("full_name_en");
   if (isPlatformRole(actor.role)) return query;
   if (actor.role === "COMPANY_ADMIN" && actor.company_id) return query.eq("company_id", actor.company_id);
   if (actor.role === "BRANCH_MANAGER" && actor.branch_id) return query.eq("branch_id", actor.branch_id);
@@ -110,8 +117,9 @@ async function listMembers(actor: MemberRow) {
 
 async function loadLookups(actor: MemberRow) {
   const empty = { companies: [], branches: [], teams: [] };
-  if (actor.role === "EMPLOYEE" || !actor.company_id) return empty;
+  if (actor.role === "EMPLOYEE") return empty;
   const platform = isPlatformRole(actor.role);
+  if (!platform && !actor.company_id) return empty;
   if (!platform && actor.role !== "COMPANY_ADMIN" && !actor.branch_id) return empty;
   if (!platform && actor.role === "TEAM_LEADER" && !actor.team_id) return empty;
 
@@ -208,6 +216,15 @@ async function removeMember(actor: MemberRow, body: Record<string, unknown>) {
   const { error } = await db.from("members").delete().eq("id", id);
   if (error) throw error;
   return { ok: true };
+}
+
+async function createCompany(actor: MemberRow, body: Record<string, unknown>) {
+  if (!isPlatformRole(actor.role)) throw new HttpError(403, "forbidden");
+  const name = requireString(body.name, "company");
+  const { data, error } = await db.from("companies").insert({ name }).select("id, name").maybeSingle();
+  if (error) throw error;
+  if (!data) throw new HttpError(422, "invalid_company");
+  return { company: data };
 }
 
 async function updateProfile(actor: MemberRow, body: Record<string, unknown>) {

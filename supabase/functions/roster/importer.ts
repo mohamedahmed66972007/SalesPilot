@@ -174,6 +174,7 @@ export async function importMembers(actor: MemberRow, body: Record<string, unkno
       branch_id: branchId,
       team_id: teamId,
       status: r.status,
+      roster_order: r.line,
       updated_at: new Date().toISOString(),
     };
     const current = byEmail.get(r.email);

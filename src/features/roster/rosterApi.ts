@@ -19,6 +19,7 @@ export interface RosterMember {
   fullNameAr: string | null;
   userId: string;
   phone: string | null;
+  rosterOrder: number | null;
   role: RosterRole;
   status: RosterStatus;
   mustChangePassword: boolean;
@@ -143,6 +144,11 @@ export async function fetchRoster(): Promise<RosterListResponse> {
     throw new RosterError(200, 'invalid_response');
   }
   return response;
+}
+
+export async function createRosterCompany(name: string): Promise<{ id: string; name: string }> {
+  const response = await callRoster<{ company: { id: string; name: string } }>({ action: 'createCompany', name });
+  return response.company;
 }
 
 export async function updateRosterMember(id: string, fields: RosterMemberFields): Promise<void> {

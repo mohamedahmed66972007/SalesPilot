@@ -117,6 +117,16 @@
     "sendReset": "Email me a password link",
     "resetSent": "A password-change link was sent to your email."
   },
+  "organization": {
+    "branches": "branches",
+    "teamsCount": "{{count}} teams",
+    "peopleCount": "{{count}} people",
+    "noPeople": "No people assigned yet.",
+    "emptyCompanies": "No companies found",
+    "emptyBranches": "No branches found",
+    "emptyTeams": "No teams found",
+    "emptyBody": "Import an employee roster to build this structure automatically."
+  },
   "placeholder": {
     "badge": "Coming next",
     "body": "This section is part of the next delivery milestone and is not built yet."
@@ -252,6 +262,10 @@
       "rank": "Rank",
       "status": "Status",
       "company": "Company",
+      "newCompany": "New company name",
+      "addCompany": "Add",
+      "creatingCompany": "Adding...",
+      "companyCreateFailed": "Could not add this company.",
       "branch": "Branch",
       "team": "Team",
       "saveFailed": "Could not save changes. Check the rank and place, then try again.",

@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   fetchRoster,
+  createRosterCompany,
   removeRosterMember,
   updateRosterMember,
   type RosterMemberFields,
@@ -10,6 +11,14 @@ export function useRosterList(viewerId: string) {
   return useQuery({
     queryKey: ['roster', 'list', viewerId],
     queryFn: fetchRoster,
+  });
+}
+
+export function useCreateRosterCompany() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (name: string) => createRosterCompany(name),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['roster'] }),
   });
 }
 

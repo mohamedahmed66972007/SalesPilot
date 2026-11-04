@@ -56,10 +56,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setState({ status: 'signedOut' });
       return;
     }
-    if (!user.emailVerified) {
-      setState({ status: 'unverified', email: user.email ?? '' });
-      return;
-    }
     setState({ status: 'loading' });
     try {
       const member = await fetchCurrentMember();

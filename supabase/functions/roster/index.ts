@@ -42,7 +42,7 @@ async function resolveActor(claims: FirebaseClaims): Promise<MemberRow> {
 
   let member = linked as MemberRow | null;
   if (!member) {
-    if (!claims.email || !claims.emailVerified) throw new HttpError(403, "not_registered");
+    if (!claims.email) throw new HttpError(403, "not_registered");
     const { data: byEmail, error: emailError } = await db
       .from("members")
       .select(MEMBER_SELECT)
