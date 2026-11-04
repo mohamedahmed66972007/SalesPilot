@@ -37,11 +37,17 @@
   :root[data-theme='midnight'] { --app-primary: #101827; --app-accent: #4d91c6; --app-accent-soft: #e2eff9; }
 
   :root[data-appearance='dark'] body,
-  :root[data-appearance='dark'] .bg-white { background-color: var(--app-surface) !important; }
+  :root[data-appearance='dark'] [class*='bg-white'] { background-color: var(--app-surface) !important; }
   :root[data-appearance='dark'] .bg-neutral-50 { background-color: var(--app-bg) !important; }
+  :root[data-appearance='dark'] .bg-neutral-100 { background-color: #223047 !important; }
+  :root[data-appearance='dark'] .text-primary-900 { color: #f4dce8 !important; }
   :root[data-appearance='dark'] .text-neutral-900,
   :root[data-appearance='dark'] .text-neutral-700,
-  :root[data-appearance='dark'] .text-neutral-600 { color: #d7e2ec !important; }
+  :root[data-appearance='dark'] .text-neutral-600,
+  :root[data-appearance='dark'] .text-neutral-500 { color: #d7e2ec !important; }
+  :root[data-appearance='dark'] .border-neutral-200,
+  :root[data-appearance='dark'] .border-neutral-300 { border-color: #52647b !important; }
+  :root[data-appearance='dark'] .divide-neutral-100 > :not([hidden]) ~ :not([hidden]) { border-color: #2e4058 !important; }
   .bg-primary-900 { background-color: var(--app-primary) !important; }
   .text-primary-900 { color: var(--app-primary) !important; }
   .bg-accent-50 { background-color: var(--app-accent-soft) !important; }

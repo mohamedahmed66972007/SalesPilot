@@ -68,9 +68,6 @@ export function ProfilePage() {
             <Field id="profile-phone" label={t('profile.phone')}>
               <input id="profile-phone" value={phone} onChange={(event) => setPhone(event.target.value)} className={inputClass} dir="ltr" inputMode="tel" />
             </Field>
-            <Field id="profile-email" label={t('profile.email')}>
-              <input id="profile-email" value={member.email} className={`${inputClass} bg-neutral-100`} readOnly dir="ltr" />
-            </Field>
             {status === 'saved' && <p role="status" className="rounded-lg bg-success-50 px-3 py-2 text-sm text-success-700">{t('profile.saved')}</p>}
             {status === 'error' && <p role="alert" className="rounded-lg bg-error-50 px-3 py-2 text-sm text-error-700">{t('profile.error')}</p>}
             <Button onClick={() => void save()} disabled={saving} className="w-full sm:w-auto sm:self-start">

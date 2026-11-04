@@ -15,7 +15,7 @@ export function useCurrentUser() {
   const language = usePreferences((preferences) => preferences.language);
   const member = state.status === 'ready' ? state.member : null;
   return useQuery({
-    queryKey: [...queryKeys.currentUser, member?.id ?? 'demo', language],
+    queryKey: [...queryKeys.currentUser, member?.id ?? 'demo', member?.fullNameEn ?? '', member?.fullNameAr ?? '', language],
     queryFn: () => {
       if (member) {
         return Promise.resolve<SessionUser>({
