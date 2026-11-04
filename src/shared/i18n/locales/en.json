@@ -309,6 +309,18 @@
       "done": "Added {{created}} and updated {{updated}}.",
       "accounts": "Sign-in accounts: {{created}} created, {{existing}} already existed.",
       "accountsFailed": "No sign-in account could be created for rows {{lines}}. Check the email and password in the file, then import again.",
+      "accountErrorReason": "Reason: {{reason}}",
+      "accountErrors": {
+        "missing_password": "The Password column is empty for these rows.",
+        "auth/email-already-in-use": "An account with this email already exists.",
+        "auth/invalid-email": "The email address is not valid.",
+        "auth/operation-not-allowed": "Email/password sign-in is not enabled for this project.",
+        "auth/weak-password": "The password is too weak (minimum 6 characters).",
+        "auth/too-many-requests": "Too many requests were sent. Wait a few minutes and try again.",
+        "auth/network-request-failed": "A network error occurred while reaching the sign-in service.",
+        "auth/internal-error": "The sign-in service returned an internal error. Try again later.",
+        "auth/configuration-not-found": "The sign-in configuration could not be found for this project."
+      },
       "errors": {
         "unreadable": "This file could not be read. Upload the Excel roster file.",
         "empty": "No people were found in this file.",
