@@ -3,7 +3,7 @@ import { HttpError } from "./http.ts";
 import { assignableRolesBelow, canManage, parseAssignableRole, placementError, type Role } from "./rules.ts";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const USERNAME_PATTERN = /^[a-z0-9._-]{3,40}$/;
+const USER_ID_PATTERN = /^[0-9]{7}$/;
 const MAX_ROWS = 500;
 
 interface ParsedRow {
@@ -14,7 +14,7 @@ interface ParsedRow {
   company: string | null;
   branch: string | null;
   team: string | null;
-  username: string;
+  userId: string;
   email: string;
   status: "Active" | "Suspended";
 }
@@ -34,7 +34,7 @@ function parseRow(raw: unknown, index: number, issues: RowIssue[]): ParsedRow | 
   const before = issues.length;
   const fullNameEn = text(r.fullNameEn);
   const email = text(r.email)?.toLowerCase() ?? "";
-  const username = text(r.username)?.toLowerCase() ?? "";
+  const userId = text(r.userId) ?? "";
   const role = parseAssignableRole(text(r.role) ?? "");
   const company = text(r.company);
   const branch = text(r.branch);
@@ -44,7 +44,7 @@ function parseRow(raw: unknown, index: number, issues: RowIssue[]): ParsedRow | 
 
   if (!fullNameEn) issues.push({ line, code: "missing_name" });
   if (!EMAIL_PATTERN.test(email)) issues.push({ line, code: "invalid_email" });
-  if (!USERNAME_PATTERN.test(username)) issues.push({ line, code: "invalid_username" });
+  if (!USER_ID_PATTERN.test(userId)) issues.push({ line, code: "invalid_user_id" });
   if (!role) issues.push({ line, code: "invalid_role" });
   if (branch && !company) issues.push({ line, code: "branch_without_company" });
   if (team && !branch) issues.push({ line, code: "team_without_branch" });
@@ -61,7 +61,7 @@ function parseRow(raw: unknown, index: number, issues: RowIssue[]): ParsedRow | 
     company,
     branch,
     team,
-    username,
+    userId,
     email,
     status,
   };
@@ -82,23 +82,23 @@ export async function importMembers(actor: MemberRow, body: Record<string, unkno
 
   const { data: existingData, error: existingError } = await db
     .from("members")
-    .select("id, email, username, role");
+    .select("id, email, user_id, role");
   if (existingError) throw existingError;
-  const existing = (existingData ?? []) as { id: string; email: string; username: string; role: Role }[];
+  const existing = (existingData ?? []) as { id: string; email: string; user_id: string; role: Role }[];
   const byEmail = new Map(existing.map((m) => [m.email, m]));
-  const byUsername = new Map(existing.map((m) => [m.username, m]));
+  const byUserId = new Map(existing.map((m) => [m.user_id, m]));
   const seenEmails = new Set<string>();
-  const seenUsernames = new Set<string>();
+  const seenUserIds = new Set<string>();
 
   for (const row of rows) {
     const current = byEmail.get(row.email);
     if (current?.role === "OWNER") issues.push({ line: row.line, code: "owner_protected" });
     if (seenEmails.has(row.email)) issues.push({ line: row.line, code: "duplicate_email" });
-    if (seenUsernames.has(row.username)) issues.push({ line: row.line, code: "duplicate_username" });
-    const usernameOwner = byUsername.get(row.username);
-    if (usernameOwner && usernameOwner.email !== row.email) issues.push({ line: row.line, code: "username_taken" });
+    if (seenUserIds.has(row.userId)) issues.push({ line: row.line, code: "duplicate_user_id" });
+    const userIdOwner = byUserId.get(row.userId);
+    if (userIdOwner && userIdOwner.email !== row.email) issues.push({ line: row.line, code: "user_id_taken" });
     seenEmails.add(row.email);
-    seenUsernames.add(row.username);
+    seenUserIds.add(row.userId);
   }
 
   if (issues.length > 0) throw new HttpError(422, "validation", issues);
@@ -167,7 +167,8 @@ export async function importMembers(actor: MemberRow, body: Record<string, unkno
     const payload = {
       full_name_en: r.fullNameEn,
       full_name_ar: r.fullNameAr,
-      username: r.username,
+      user_id: r.userId,
+      username: r.userId,
       role: r.role,
       company_id: companyId,
       branch_id: branchId,

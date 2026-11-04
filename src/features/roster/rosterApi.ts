@@ -17,7 +17,7 @@ export interface RosterMember {
   email: string;
   fullNameEn: string;
   fullNameAr: string | null;
-  username: string;
+  userId: string;
   role: RosterRole;
   status: RosterStatus;
   mustChangePassword: boolean;
@@ -60,7 +60,7 @@ export interface RosterImportRow {
   company: string | null;
   branch: string | null;
   team: string | null;
-  username: string;
+  userId: string;
   email: string;
   status: RosterStatus;
 }

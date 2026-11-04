@@ -36,6 +36,7 @@ export function RosterTable({
         <thead className="bg-neutral-50">
           <tr>
             <th scope="col" className={HEADER_CLASS}>{t('roster.columns.person')}</th>
+            <th scope="col" className={HEADER_CLASS}>{t('roster.columns.userId')}</th>
             <th scope="col" className={HEADER_CLASS}>{t('roster.columns.rank')}</th>
             <th scope="col" className={HEADER_CLASS}>{t('roster.columns.company')}</th>
             <th scope="col" className={HEADER_CLASS}>{t('roster.columns.branch')}</th>
@@ -64,6 +65,7 @@ export function RosterTable({
                   </span>
                 </div>
               </td>
+              <td className="px-4 py-3 font-mono text-neutral-700" dir="ltr">{member.userId}</td>
               <td className="px-4 py-3">
                 <Badge tone={ROLE_TONE[member.role]}>{t(`roles.${member.role}`)}</Badge>
               </td>

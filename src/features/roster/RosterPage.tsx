@@ -34,7 +34,7 @@ export function RosterPage({ member }: { member: RosterMember }) {
     const term = search.trim().toLowerCase();
     if (!term) return members;
     return members.filter((person) =>
-      [person.fullNameEn, person.fullNameAr, person.email, person.username].some((field) =>
+      [person.fullNameEn, person.fullNameAr, person.email, person.userId].some((field) =>
         (field ?? '').toLowerCase().includes(term)
       )
     );

@@ -181,13 +181,14 @@
   "roster": {
     "title": "كشف الفريق",
     "description": "كل من تديره، ورتبته، ومكانه في الشركة.",
-    "searchPlaceholder": "ابحث بالاسم أو البريد أو اسم المستخدم",
+    "searchPlaceholder": "ابحث بالاسم أو البريد أو User ID",
     "total": "{{count}} شخص",
     "noMatches": "لا يوجد أحد يطابق بحثك.",
     "emptyTitle": "لا يوجد أحد في الكشف بعد",
     "emptyBody": "ارفع ملف Excel لإضافة فريقك في خطوة واحدة.",
     "columns": {
       "person": "الشخص",
+      "userId": "رقم المستخدم",
       "rank": "الرتبة",
       "company": "الشركة",
       "branch": "الفرع",
@@ -242,6 +243,14 @@
       "commit": "استيراد {{count}} شخص",
       "invalidIntro": "{{count}} صف يحتاج إلى تصحيح. لم يتم استيراد أي شيء.",
       "issue": "الصف {{line}}: {{code}}",
+      "issues": {
+        "invalid_user_id": "رقم المستخدم يجب أن يتكون من 7 أرقام بالضبط.",
+        "duplicate_user_id": "رقم المستخدم مكرر داخل الملف.",
+        "user_id_taken": "رقم المستخدم مستخدم بالفعل لشخص آخر.",
+        "duplicate_email": "البريد الإلكتروني مكرر داخل الملف.",
+        "invalid_email": "البريد الإلكتروني غير صحيح.",
+        "missing_name": "الاسم الإنجليزي مفقود."
+      },
       "importing": "جارٍ حفظ الكشف...",
       "accountProgress": "جارٍ إنشاء حسابات الدخول: {{done}} من {{total}}",
       "done": "تمت إضافة {{created}} وتحديث {{updated}}.",

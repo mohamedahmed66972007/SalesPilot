@@ -2,6 +2,7 @@ import { useRef, useState, type ChangeEvent } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { FileSpreadsheet } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import { Button } from '@/shared/ui/Button';
 import { Modal } from '@/shared/ui/Modal';
 import {
@@ -149,6 +150,11 @@ export function ImportRosterDialog({ open, onOpenChange }: { open: boolean; onOp
   );
 }
 
+function formatIssue(t: TFunction, issue: RosterValidationIssue): string {
+  const message = t(`roster.import.issues.${issue.code}`, { defaultValue: issue.code });
+  return t('roster.import.issue', { line: issue.line, code: message });
+}
+
 function ChooseStep({ onPick }: { onPick: () => void }) {
   const { t } = useTranslation();
   return (
@@ -204,7 +210,7 @@ function InvalidStep({ issues, onChooseAnother }: { issues: RosterValidationIssu
       <ul className="flex max-h-60 flex-col gap-2 overflow-y-auto text-sm text-neutral-700">
         {issues.slice(0, MAX_LISTED_ISSUES).map((issue, index) => (
           <li key={`${issue.line}-${issue.code}-${index}`} className="rounded-lg bg-neutral-50 px-3 py-2">
-            {t('roster.import.issue', { line: issue.line, code: issue.code })}
+            {formatIssue(t, issue)}
           </li>
         ))}
       </ul>

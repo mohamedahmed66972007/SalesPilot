@@ -23,7 +23,7 @@ export function toMemberDto(row: MemberRow, manageable: boolean) {
     email: row.email,
     fullNameEn: row.full_name_en,
     fullNameAr: row.full_name_ar,
-    username: row.username,
+    userId: row.user_id,
     role: row.role,
     status: row.status,
     mustChangePassword: row.must_change_password,

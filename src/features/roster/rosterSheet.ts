@@ -63,7 +63,7 @@ function toRosterRow(record: Record<string, unknown>, line: number): RosterFileR
       company: optionalFirstCell(record, 'Company', 'الشركة'),
       branch: optionalFirstCell(record, 'Branch', 'الفرع'),
       team: optionalFirstCell(record, 'Team', 'الفريق'),
-      username: cell(record, 'Username'),
+      userId: firstCell(record, 'User ID', 'UserID', 'User Id', 'رقم المستخدم', 'معرف المستخدم'),
       email,
       status: toStatus(cell(record, 'Status')),
     },
