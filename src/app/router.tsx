@@ -9,15 +9,19 @@ import { AuthGate } from '@/features/auth/AuthGate';
 import { RosterPage } from '@/features/roster/RosterPage';
 
 const sectionRoutes: RouteObject[] = NAV_ITEMS.map((item) => {
-  const page = item.key === 'dashboard' ? <DashboardPage /> : <SectionPlaceholderPage sectionKey={item.key} />;
+  const page = item.key === 'dashboard' ? <DashboardPage /> : item.key === 'employees' ? <RosterPageWrapper /> : <SectionPlaceholderPage sectionKey={item.key} />;
   const element = <RequirePermission action={item.action}>{page}</RequirePermission>;
   return item.path === '/' ? { index: true, element } : { path: item.path.slice(1), element };
 });
 
+function RosterPageWrapper() {
+  return <AuthGate>{(member) => <RosterPage member={member} />}</AuthGate>;
+}
+
 export const router = createBrowserRouter([
   {
     path: '/roster',
-    element: <AuthGate>{(member) => <RosterPage member={member} />}</AuthGate>,
+    element: <RosterPageWrapper />,
   },
   {
     path: '/',

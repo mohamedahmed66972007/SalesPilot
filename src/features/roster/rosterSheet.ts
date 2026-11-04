@@ -30,23 +30,39 @@ function passwordCell(record: Record<string, unknown>): string | null {
   return value === undefined || value === null || String(value) === '' ? null : String(value);
 }
 
+function firstCell(record: Record<string, unknown>, ...headers: string[]): string {
+  for (const header of headers) {
+    const value = cell(record, header);
+    if (value) return value;
+  }
+  return '';
+}
+
+function optionalFirstCell(record: Record<string, unknown>, ...headers: string[]): string | null {
+  for (const header of headers) {
+    const value = optionalCell(record, header);
+    if (value) return value;
+  }
+  return null;
+}
+
 function toStatus(value: string): RosterStatus {
-  return value.toLowerCase() === 'suspended' ? 'Suspended' : 'Active';
+  return /suspended|inactive|غير نشط|موقوف/i.test(value) ? 'Suspended' : 'Active';
 }
 
 function toRosterRow(record: Record<string, unknown>, line: number): RosterFileRow | null {
-  const fullNameEn = cell(record, 'Full Name (EN)');
+  const fullNameEn = firstCell(record, 'Full Name (EN)', 'Full Name', 'الاسم (EN)');
   const email = cell(record, 'Email');
   if (!fullNameEn && !email) return null;
   return {
     row: {
       line,
       fullNameEn,
-      fullNameAr: optionalCell(record, 'الاسم (AR)'),
-      role: cell(record, 'Role'),
-      company: optionalCell(record, 'Company'),
-      branch: optionalCell(record, 'Branch'),
-      team: optionalCell(record, 'Team'),
+      fullNameAr: optionalFirstCell(record, 'الاسم (AR)', 'Full Name (AR)'),
+      role: firstCell(record, 'Role', 'الرتبة'),
+      company: optionalFirstCell(record, 'Company', 'الشركة'),
+      branch: optionalFirstCell(record, 'Branch', 'الفرع'),
+      team: optionalFirstCell(record, 'Team', 'الفريق'),
       username: cell(record, 'Username'),
       email,
       status: toStatus(cell(record, 'Status')),

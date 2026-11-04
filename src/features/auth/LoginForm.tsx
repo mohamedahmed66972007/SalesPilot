@@ -7,7 +7,6 @@ import { Button } from '@/shared/ui/Button';
 import { Field, inputClass } from '@/shared/ui/Field';
 import { firebaseErrorCode } from '@/shared/auth/firebase';
 import { useAuth } from '@/features/auth/useAuth';
-import { GoogleSignInButton } from '@/features/auth/GoogleSignInButton';
 
 const schema = z.object({
   email: z.string().trim().email(),
@@ -89,7 +88,6 @@ export function LoginForm({ onForgotPassword }: { onForgotPassword: () => void }
       <Button variant="ghost" size="sm" onClick={onForgotPassword} className="self-end">
         {t('auth.signIn.forgot')}
       </Button>
-      <GoogleSignInButton />
     </form>
   );
 }

@@ -1,6 +1,6 @@
 import { db, type MemberRow } from "./db.ts";
 import { HttpError } from "./http.ts";
-import { parseAssignableRole, placementError, type Role } from "./rules.ts";
+import { assignableRolesBelow, canManage, parseAssignableRole, placementError, type Role } from "./rules.ts";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const USERNAME_PATTERN = /^[a-z0-9._-]{3,40}$/;
@@ -39,7 +39,8 @@ function parseRow(raw: unknown, index: number, issues: RowIssue[]): ParsedRow | 
   const company = text(r.company);
   const branch = text(r.branch);
   const team = text(r.team);
-  const status = r.status === "Suspended" ? "Suspended" : "Active";
+  const statusText = text(r.status)?.toLowerCase() ?? "";
+  const status = /suspended|inactive|غير نشط|موقوف/.test(statusText) ? "Suspended" : "Active";
 
   if (!fullNameEn) issues.push({ line, code: "missing_name" });
   if (!EMAIL_PATTERN.test(email)) issues.push({ line, code: "invalid_email" });
@@ -67,7 +68,6 @@ function parseRow(raw: unknown, index: number, issues: RowIssue[]): ParsedRow | 
 }
 
 export async function importMembers(actor: MemberRow, body: Record<string, unknown>) {
-  if (actor.role !== "OWNER") throw new HttpError(403, "forbidden");
   if (!Array.isArray(body.rows) || body.rows.length === 0 || body.rows.length > MAX_ROWS) {
     throw new HttpError(422, "invalid_rows");
   }
@@ -157,6 +157,13 @@ export async function importMembers(actor: MemberRow, body: Record<string, unkno
     const companyId = r.company ? (companyIds.get(r.company) ?? null) : null;
     const branchId = r.branch && companyId ? (branchIds.get(`${companyId}|${r.branch}`) ?? null) : null;
     const teamId = r.team && branchId ? (teamIds.get(`${branchId}|${r.team}`) ?? null) : null;
+    const targetPlacement = { role: r.role, companyId, branchId, teamId };
+    if (!assignableRolesBelow(actor.role).includes(r.role) || !canManage(
+      { role: actor.role, companyId: actor.company_id, branchId: actor.branch_id, teamId: actor.team_id },
+      targetPlacement
+    )) {
+      throw new HttpError(403, "out_of_scope");
+    }
     const payload = {
       full_name_en: r.fullNameEn,
       full_name_ar: r.fullNameAr,

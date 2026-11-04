@@ -1,13 +1,11 @@
 import { createContext, useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import {
-  GoogleAuthProvider,
   onAuthStateChanged,
   type Auth,
   reload,
   sendEmailVerification,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
-  signInWithPopup,
   signOut as firebaseSignOut,
   updatePassword,
   type User,
@@ -32,7 +30,6 @@ export type AuthState =
 export interface AuthContextValue {
   state: AuthState;
   signIn: (email: string, password: string) => Promise<void>;
-  signInWithGoogle: () => Promise<void>;
   sendPasswordReset: (email: string) => Promise<void>;
   signOut: () => Promise<void>;
   resendVerification: () => Promise<void>;
@@ -89,12 +86,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await signInWithEmailAndPassword(getFirebaseAuth(), email, password);
   }, []);
 
-  const signInWithGoogle = useCallback(async () => {
-    const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: 'select_account' });
-    await signInWithPopup(getFirebaseAuth(), provider);
-  }, []);
-
   const sendPasswordReset = useCallback(async (email: string) => {
     await sendPasswordResetEmail(getFirebaseAuth(), email);
   }, []);
@@ -136,7 +127,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     () => ({
       state,
       signIn,
-      signInWithGoogle,
       sendPasswordReset,
       signOut,
       resendVerification,
@@ -147,7 +137,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [
       state,
       signIn,
-      signInWithGoogle,
       sendPasswordReset,
       signOut,
       resendVerification,

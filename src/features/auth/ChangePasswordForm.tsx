@@ -8,11 +8,11 @@ import { Field, inputClass } from '@/shared/ui/Field';
 import { firebaseErrorCode } from '@/shared/auth/firebase';
 import { useAuth } from '@/features/auth/useAuth';
 
-const MIN_PASSWORD_LENGTH = 8;
+const PASSWORD_PATTERN = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,12}$/;
 
 const schema = z
   .object({
-    password: z.string().min(MIN_PASSWORD_LENGTH),
+    password: z.string().regex(PASSWORD_PATTERN),
     confirm: z.string(),
   })
   .refine((values) => values.password === values.confirm, { path: ['confirm'] });
@@ -48,7 +48,7 @@ export function ChangePasswordForm() {
           id="new-password"
           label={t('auth.changePassword.newPassword')}
           hint={t('auth.changePassword.hint')}
-          error={errors.password && t('auth.errors.passwordTooShort')}
+          error={errors.password && t('auth.errors.passwordInvalid')}
         >
           <input
             id="new-password"

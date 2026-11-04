@@ -4,6 +4,7 @@ import { db, MEMBER_SELECT, type MemberRow } from "./db.ts";
 import { corsHeaders, HttpError, json } from "./http.ts";
 
 const FIREBASE_PROJECT_ID = "salespilot-e581d";
+const ROSTER_FUNCTION_VERSION = "2026-11-04";
 const FIREBASE_KEYS = createRemoteJWKSet(
   new URL("https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com")
 );
@@ -68,6 +69,7 @@ Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 200, headers: corsHeaders });
 
   try {
+    void ROSTER_FUNCTION_VERSION;
     const token = req.headers.get("Authorization")?.replace(/^Bearer\s+/i, "");
     if (!token) throw new HttpError(401, "unauthenticated");
     const claims = await verifyFirebaseToken(token);

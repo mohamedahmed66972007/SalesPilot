@@ -29,7 +29,16 @@ export interface Placement {
 
 export function parseAssignableRole(raw: string): Role | null {
   const text = raw.trim().toLowerCase();
-  return ASSIGNABLE_ROLES.find((role) => role.toLowerCase().replace(/_/g, " ") === text) ?? null;
+  const arabicRoles: Record<string, Role> = {
+    "مدير النظام": "SUPER_ADMIN",
+    "مدير المنصة": "SUPER_ADMIN",
+    "مدير الشركة": "COMPANY_ADMIN",
+    "مدير فرع": "BRANCH_MANAGER",
+    "قائد فريق": "TEAM_LEADER",
+    "موظف": "EMPLOYEE",
+    "موظف مبيعات": "EMPLOYEE",
+  };
+  return arabicRoles[raw.trim()] ?? ASSIGNABLE_ROLES.find((role) => role.toLowerCase().replace(/_/g, " ") === text) ?? null;
 }
 
 export function assignableRolesBelow(actor: Role): Role[] {
