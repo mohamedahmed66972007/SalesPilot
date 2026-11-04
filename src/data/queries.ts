@@ -2,6 +2,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDataAdapter } from '@/data/useDataAdapter';
 import type { SaleFilters } from '@/data/adapters/repositories';
 import type { SessionUser } from '@/shared/types/domain';
+import { useAuth } from '@/features/auth/useAuth';
+import { usePreferences } from '@/shared/stores/preferences';
 
 export const queryKeys = {
   currentUser: ['session', 'current-user'] as const,
@@ -9,10 +11,26 @@ export const queryKeys = {
 
 export function useCurrentUser() {
   const adapter = useDataAdapter();
+  const { state } = useAuth();
+  const language = usePreferences((preferences) => preferences.language);
+  const member = state.status === 'ready' ? state.member : null;
   return useQuery({
-    queryKey: queryKeys.currentUser,
-    queryFn: () => adapter.auth.currentUser(),
+    queryKey: [...queryKeys.currentUser, member?.id ?? 'demo', language],
+    queryFn: () => {
+      if (member) {
+        return Promise.resolve<SessionUser>({
+          id: member.id,
+          companyId: member.companyId,
+          role: member.role === 'OWNER' ? 'SUPER_ADMIN' : member.role,
+          displayName: language === 'ar' ? member.fullNameAr ?? member.fullNameEn : member.fullNameEn,
+          branchIds: member.branchId ? [member.branchId] : [],
+          teamId: member.teamId,
+        });
+      }
+      return adapter.auth.currentUser();
+    },
     staleTime: Infinity,
+    enabled: state.status !== 'loading',
   });
 }
 
